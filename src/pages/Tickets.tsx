@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Mail, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import { Mail, AlertCircle, CheckCircle, Clock, FileText, FileJson } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +10,13 @@ import { useForm } from "react-hook-form";
 import { toast } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from "@/components/ui/dialog";
 
 // Sample ticket data for demonstration
 const sampleTickets = [
@@ -118,8 +124,54 @@ const PriorityBadge = ({ priority }: { priority: string }) => {
   );
 };
 
+// Ticket Detail Component
+const TicketDetail = ({ ticket, onClose }: { ticket: any, onClose: () => void }) => {
+  const [showRawJson, setShowRawJson] = useState(false);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-xl font-semibold mb-1">{ticket.subject}</h2>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span>From: {ticket.email}</span>
+            <span>•</span>
+            <span>Created: {formatDate(ticket.createdAt)}</span>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <StatusBadge status={ticket.status} />
+          <PriorityBadge priority={ticket.priority} />
+        </div>
+      </div>
+      
+      <div className="border-t border-b py-4">
+        <h3 className="font-medium mb-2">Ticket Description</h3>
+        <p className="text-gray-700">
+          This is a placeholder description for ticket {ticket.id}. In a real application, 
+          this would contain the actual content of the ticket from the database.
+        </p>
+      </div>
+      
+      <div className="flex gap-2">
+        <Button onClick={() => setShowRawJson(!showRawJson)} variant="outline" className="flex items-center gap-2">
+          {showRawJson ? <FileText /> : <FileJson />}
+          {showRawJson ? "Hide Raw JSON" : "Show Raw JSON"}
+        </Button>
+      </div>
+      
+      {showRawJson && (
+        <div className="bg-gray-100 p-4 rounded-md overflow-auto max-h-60">
+          <pre className="text-xs">{JSON.stringify(ticket, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Tickets = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
   
   // Form handling
   const form = useForm({
@@ -154,6 +206,10 @@ const Tickets = () => {
     }
   };
 
+  const handleTicketClick = (ticket: any) => {
+    setSelectedTicket(ticket);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -185,7 +241,11 @@ const Tickets = () => {
                 </TableHeader>
                 <TableBody>
                   {sampleTickets.map((ticket) => (
-                    <TableRow key={ticket.id} className="hover:bg-gray-50">
+                    <TableRow 
+                      key={ticket.id} 
+                      className="hover:bg-gray-50 cursor-pointer"
+                      onClick={() => handleTicketClick(ticket)}
+                    >
                       <TableCell className="font-medium">{ticket.id}</TableCell>
                       <TableCell>{ticket.subject}</TableCell>
                       <TableCell>{ticket.email}</TableCell>
@@ -312,6 +372,19 @@ const Tickets = () => {
             </Form>
           </CardContent>
         </Card>
+        
+        {/* Ticket Detail Dialog */}
+        <Dialog open={!!selectedTicket} onOpenChange={(open) => !open && setSelectedTicket(null)}>
+          <DialogContent className="sm:max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Ticket Details</DialogTitle>
+              <DialogDescription>
+                View the complete information for this support ticket
+              </DialogDescription>
+            </DialogHeader>
+            {selectedTicket && <TicketDetail ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
