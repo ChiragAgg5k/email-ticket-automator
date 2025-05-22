@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,8 +13,10 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <Mail className="h-8 w-8 text-helpdesk-teal mr-2" />
-            <span className="text-xl font-bold text-helpdesk-dark">EmailTicket</span>
+            <Link to="/" className="flex items-center">
+              <Mail className="h-8 w-8 text-helpdesk-teal mr-2" />
+              <span className="text-xl font-bold text-helpdesk-dark">EmailTicket</span>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -27,8 +30,8 @@ const Header: React.FC = () => {
             <a href="#testimonials" className="text-gray-600 hover:text-helpdesk-teal transition-colors">
               Testimonials
             </a>
-            <Button className="bg-helpdesk-blue hover:bg-blue-600 transition-colors">
-              Get Started
+            <Button className="bg-helpdesk-blue hover:bg-blue-600 transition-colors" asChild>
+              <Link to="/tickets">Get Started</Link>
             </Button>
           </nav>
 
@@ -97,12 +100,13 @@ const Header: React.FC = () => {
               >
                 Testimonials
               </a>
-              <Button 
-                className="bg-helpdesk-blue hover:bg-blue-600 transition-colors w-full"
+              <Link 
+                to="/tickets"
+                className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-white py-2 px-4 rounded text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Get Started
-              </Button>
+              </Link>
             </div>
           </div>
         )}

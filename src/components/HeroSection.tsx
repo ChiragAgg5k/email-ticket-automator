@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const HeroSection: React.FC = () => {
   return (
@@ -18,8 +19,8 @@ const HeroSection: React.FC = () => {
               Streamline workflows, improve response times, and provide better customer service.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-lg py-6 px-8">
-                Start Free Trial
+              <Button className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-lg py-6 px-8" asChild>
+                <Link to="/tickets">Start Free Trial</Link>
               </Button>
               <Button variant="outline" className="border-helpdesk-teal text-helpdesk-teal hover:bg-helpdesk-teal/10 text-lg py-6 px-8">
                 Request Demo
