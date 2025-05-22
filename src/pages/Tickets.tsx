@@ -10,6 +10,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, For
 import { useForm } from "react-hook-form";
 import { toast } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+import Header from "@/components/Header";
 
 // Sample ticket data for demonstration
 const sampleTickets = [
@@ -154,8 +155,9 @@ const Tickets = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white pt-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-white">
+      <Header />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20">
         <h1 className="text-3xl font-bold text-helpdesk-dark mb-8">
           Support Dashboard
         </h1>
