@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/sonner";
 import { account } from "@/lib/appwrite";
-import { ID } from "appwrite";
+import { ID, OAuthProvider } from "appwrite";
 import { Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -233,7 +233,7 @@ const Auth = () => {
                   variant="outline"
                   className="w-full flex items-center justify-center gap-2 border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                   onClick={() => {
-                    account.createOAuth2Session("google");
+                    account.createOAuth2Session(OAuthProvider.Google);
                   }}
                 >
                   {/* Google SVG Icon */}

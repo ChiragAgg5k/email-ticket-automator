@@ -1,50 +1,64 @@
-import React, { useState } from "react";
-import {
-  Mail,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  FileText,
-  FileJson,
-} from "lucide-react";
+import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from "@/components/ui/card";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { toast } from "@/components/ui/sonner";
-import { cn } from "@/lib/utils";
-import Header from "@/components/Header";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import {
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  FileJson,
+  FileText,
+  Mail,
+} from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+
+type Ticket = {
+  id: string;
+  subject: string;
+  email: string;
+  status: string;
+  priority: string;
+  createdAt: string;
+};
+
+type TicketFormData = {
+  email: string;
+  subject: string;
+  body: string;
+  priority: string;
+};
 
 // Sample ticket data for demonstration
 const sampleTickets = [
@@ -155,14 +169,7 @@ const PriorityBadge = ({ priority }: { priority: string }) => {
   );
 };
 
-// Ticket Detail Component
-const TicketDetail = ({
-  ticket,
-  onClose,
-}: {
-  ticket: any;
-  onClose: () => void;
-}) => {
+const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
   const [showRawJson, setShowRawJson] = useState(false);
 
   return (
@@ -213,7 +220,7 @@ const TicketDetail = ({
 
 const Tickets = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
   // Form handling
   const form = useForm({
@@ -225,12 +232,10 @@ const Tickets = () => {
     },
   });
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: TicketFormData) => {
     setIsSubmitting(true);
 
-    // Simulate sending the email/creating a ticket
     try {
-      // In a real application, you would send this data to your backend
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       toast.success("Email ticket submitted successfully", {
@@ -248,7 +253,7 @@ const Tickets = () => {
     }
   };
 
-  const handleTicketClick = (ticket: any) => {
+  const handleTicketClick = (ticket: Ticket) => {
     setSelectedTicket(ticket);
   };
 
@@ -457,12 +462,7 @@ const Tickets = () => {
                 View the complete information for this support ticket
               </DialogDescription>
             </DialogHeader>
-            {selectedTicket && (
-              <TicketDetail
-                ticket={selectedTicket}
-                onClose={() => setSelectedTicket(null)}
-              />
-            )}
+            {selectedTicket && <TicketDetail ticket={selectedTicket} />}
           </DialogContent>
         </Dialog>
       </div>
