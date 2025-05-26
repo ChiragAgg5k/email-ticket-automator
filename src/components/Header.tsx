@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
@@ -15,22 +14,36 @@ const Header: React.FC = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <Mail className="h-8 w-8 text-helpdesk-teal mr-2" />
-              <span className="text-xl font-bold text-helpdesk-dark">EmailTicket</span>
+              <span className="text-xl font-bold text-helpdesk-dark">
+                EmailTicket
+              </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-600 hover:text-helpdesk-teal transition-colors">
+            <a
+              href="#features"
+              className="text-gray-600 hover:text-helpdesk-teal transition-colors"
+            >
               Features
             </a>
-            <a href="#how-it-works" className="text-gray-600 hover:text-helpdesk-teal transition-colors">
+            <a
+              href="#how-it-works"
+              className="text-gray-600 hover:text-helpdesk-teal transition-colors"
+            >
               How It Works
             </a>
-            <a href="#testimonials" className="text-gray-600 hover:text-helpdesk-teal transition-colors">
+            <a
+              href="#testimonials"
+              className="text-gray-600 hover:text-helpdesk-teal transition-colors"
+            >
               Testimonials
             </a>
-            <Button className="bg-helpdesk-blue hover:bg-blue-600 transition-colors" asChild>
+            <Button
+              className="bg-helpdesk-blue hover:bg-blue-600 transition-colors"
+              asChild
+            >
               <Link to="/auth">Get Started</Link>
             </Button>
           </nav>
@@ -100,7 +113,7 @@ const Header: React.FC = () => {
               >
                 Testimonials
               </a>
-              <Link 
+              <Link
                 to="/auth"
                 className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-white py-2 px-4 rounded text-center"
                 onClick={() => setIsMenuOpen(false)}

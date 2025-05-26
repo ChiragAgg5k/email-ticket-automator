@@ -1,21 +1,49 @@
 import React, { useState } from "react";
-import { Mail, AlertCircle, CheckCircle, Clock, FileText, FileJson } from "lucide-react";
+import {
+  Mail,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  FileText,
+  FileJson,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { toast } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
-import { 
-  Dialog, 
-  DialogContent, 
+import {
+  Dialog,
+  DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 // Sample ticket data for demonstration
@@ -59,25 +87,25 @@ const sampleTickets = [
     status: "closed",
     priority: "medium",
     createdAt: "2025-05-17T10:10:00",
-  }
+  },
 ];
 
 // Helper function to format dates
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 };
 
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
   let bgColor, textColor, icon;
-  
-  switch(status) {
+
+  switch (status) {
     case "open":
       bgColor = "bg-red-100";
       textColor = "text-red-800";
@@ -98,9 +126,11 @@ const StatusBadge = ({ status }: { status: string }) => {
       textColor = "text-gray-800";
       icon = null;
   }
-  
+
   return (
-    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
+    <span
+      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}
+    >
       {icon}
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
@@ -114,9 +144,10 @@ const PriorityBadge = ({ priority }: { priority: string }) => {
     medium: "bg-yellow-100 text-yellow-800",
     low: "bg-green-100 text-green-800",
   };
-  
-  const bgColor = colors[priority as keyof typeof colors] || "bg-gray-100 text-gray-800";
-  
+
+  const bgColor =
+    colors[priority as keyof typeof colors] || "bg-gray-100 text-gray-800";
+
   return (
     <span className={`px-2 py-1 rounded-full text-xs font-medium ${bgColor}`}>
       {priority.charAt(0).toUpperCase() + priority.slice(1)}
@@ -125,7 +156,13 @@ const PriorityBadge = ({ priority }: { priority: string }) => {
 };
 
 // Ticket Detail Component
-const TicketDetail = ({ ticket, onClose }: { ticket: any, onClose: () => void }) => {
+const TicketDetail = ({
+  ticket,
+  onClose,
+}: {
+  ticket: any;
+  onClose: () => void;
+}) => {
   const [showRawJson, setShowRawJson] = useState(false);
 
   return (
@@ -144,22 +181,27 @@ const TicketDetail = ({ ticket, onClose }: { ticket: any, onClose: () => void })
           <PriorityBadge priority={ticket.priority} />
         </div>
       </div>
-      
+
       <div className="border-t border-b py-4">
         <h3 className="font-medium mb-2">Ticket Description</h3>
         <p className="text-gray-700">
-          This is a placeholder description for ticket {ticket.id}. In a real application, 
-          this would contain the actual content of the ticket from the database.
+          This is a placeholder description for ticket {ticket.id}. In a real
+          application, this would contain the actual content of the ticket from
+          the database.
         </p>
       </div>
-      
+
       <div className="flex gap-2">
-        <Button onClick={() => setShowRawJson(!showRawJson)} variant="outline" className="flex items-center gap-2">
+        <Button
+          onClick={() => setShowRawJson(!showRawJson)}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
           {showRawJson ? <FileText /> : <FileJson />}
           {showRawJson ? "Hide Raw JSON" : "Show Raw JSON"}
         </Button>
       </div>
-      
+
       {showRawJson && (
         <div className="bg-gray-100 p-4 rounded-md overflow-auto max-h-60">
           <pre className="text-xs">{JSON.stringify(ticket, null, 2)}</pre>
@@ -172,7 +214,7 @@ const TicketDetail = ({ ticket, onClose }: { ticket: any, onClose: () => void })
 const Tickets = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
-  
+
   // Form handling
   const form = useForm({
     defaultValues: {
@@ -185,16 +227,16 @@ const Tickets = () => {
 
   const handleSubmit = async (data: any) => {
     setIsSubmitting(true);
-    
+
     // Simulate sending the email/creating a ticket
     try {
       // In a real application, you would send this data to your backend
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       toast.success("Email ticket submitted successfully", {
         description: "Your support request has been received.",
       });
-      
+
       // Reset the form
       form.reset();
     } catch (error) {
@@ -217,7 +259,7 @@ const Tickets = () => {
         <h1 className="text-3xl font-bold text-helpdesk-dark mb-8">
           Support Dashboard
         </h1>
-        
+
         {/* Tickets Table */}
         <Card className="mb-10">
           <CardHeader>
@@ -241,8 +283,8 @@ const Tickets = () => {
                 </TableHeader>
                 <TableBody>
                   {sampleTickets.map((ticket) => (
-                    <TableRow 
-                      key={ticket.id} 
+                    <TableRow
+                      key={ticket.id}
                       className="hover:bg-gray-50 cursor-pointer"
                       onClick={() => handleTicketClick(ticket)}
                     >
@@ -263,7 +305,7 @@ const Tickets = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Email Form */}
         <Card>
           <CardHeader>
@@ -274,7 +316,10 @@ const Tickets = () => {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="space-y-6"
+              >
                 <FormField
                   control={form.control}
                   name="email"
@@ -287,7 +332,7 @@ const Tickets = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="subject"
@@ -295,12 +340,15 @@ const Tickets = () => {
                     <FormItem>
                       <FormLabel>Subject</FormLabel>
                       <FormControl>
-                        <Input placeholder="Brief description of your issue" {...field} />
+                        <Input
+                          placeholder="Brief description of your issue"
+                          {...field}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="body"
@@ -308,7 +356,7 @@ const Tickets = () => {
                     <FormItem>
                       <FormLabel>Message</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           placeholder="Please provide details about your issue..."
                           className="min-h-[150px]"
                           {...field}
@@ -317,7 +365,7 @@ const Tickets = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="priority"
@@ -330,16 +378,24 @@ const Tickets = () => {
                             <Button
                               key={priority}
                               type="button"
-                              variant={field.value === priority ? "default" : "outline"}
+                              variant={
+                                field.value === priority ? "default" : "outline"
+                              }
                               className={cn(
-                                field.value === priority && 
-                                (priority === "high" ? "bg-red-600" : 
-                                priority === "medium" ? "bg-yellow-600" : "bg-green-600"),
-                                "flex-1"
+                                field.value === priority &&
+                                  (priority === "high"
+                                    ? "bg-red-600"
+                                    : priority === "medium"
+                                      ? "bg-yellow-600"
+                                      : "bg-green-600"),
+                                "flex-1",
                               )}
-                              onClick={() => form.setValue("priority", priority)}
+                              onClick={() =>
+                                form.setValue("priority", priority)
+                              }
                             >
-                              {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                              {priority.charAt(0).toUpperCase() +
+                                priority.slice(1)}
                             </Button>
                           ))}
                         </div>
@@ -347,17 +403,33 @@ const Tickets = () => {
                     </FormItem>
                   )}
                 />
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full bg-helpdesk-blue hover:bg-blue-600"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
                     <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Processing...
                     </>
@@ -372,9 +444,12 @@ const Tickets = () => {
             </Form>
           </CardContent>
         </Card>
-        
+
         {/* Ticket Detail Dialog */}
-        <Dialog open={!!selectedTicket} onOpenChange={(open) => !open && setSelectedTicket(null)}>
+        <Dialog
+          open={!!selectedTicket}
+          onOpenChange={(open) => !open && setSelectedTicket(null)}
+        >
           <DialogContent className="sm:max-w-2xl">
             <DialogHeader>
               <DialogTitle>Ticket Details</DialogTitle>
@@ -382,7 +457,12 @@ const Tickets = () => {
                 View the complete information for this support ticket
               </DialogDescription>
             </DialogHeader>
-            {selectedTicket && <TicketDetail ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />}
+            {selectedTicket && (
+              <TicketDetail
+                ticket={selectedTicket}
+                onClose={() => setSelectedTicket(null)}
+              />
+            )}
           </DialogContent>
         </Dialog>
       </div>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,20 +5,21 @@ import { useToast } from "@/hooks/use-toast";
 
 const ContactSection: React.FC = () => {
   const { toast } = useToast();
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     toast({
       title: "Thanks for your interest!",
-      description: "We'll be in touch soon with more information about how our email parsing solution can help your business.",
+      description:
+        "We'll be in touch soon with more information about how our email parsing solution can help your business.",
     });
-    
+
     // Reset form
     const form = e.target as HTMLFormElement;
     form.reset();
   };
-  
+
   return (
     <section className="py-16 md:py-24 bg-helpdesk-dark text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,10 +29,11 @@ const ContactSection: React.FC = () => {
               Ready to Transform Your Customer Support?
             </h2>
             <p className="text-xl text-gray-300">
-              Get started with our email parsing solution and see the difference in your support workflow.
+              Get started with our email parsing solution and see the difference
+              in your support workflow.
             </p>
           </div>
-          
+
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 shadow-lg">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -48,7 +49,7 @@ const ContactSection: React.FC = () => {
                     className="bg-white/20 border-white/20 text-white placeholder:text-gray-400"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <label htmlFor="email" className="block text-sm font-medium">
                     Work Email
@@ -61,9 +62,12 @@ const ContactSection: React.FC = () => {
                     className="bg-white/20 border-white/20 text-white placeholder:text-gray-400"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
-                  <label htmlFor="company" className="block text-sm font-medium">
+                  <label
+                    htmlFor="company"
+                    className="block text-sm font-medium"
+                  >
                     Company Name
                   </label>
                   <Input
@@ -74,9 +78,12 @@ const ContactSection: React.FC = () => {
                     className="bg-white/20 border-white/20 text-white placeholder:text-gray-400"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
-                  <label htmlFor="tickets" className="block text-sm font-medium">
+                  <label
+                    htmlFor="tickets"
+                    className="block text-sm font-medium"
+                  >
                     Monthly Support Tickets
                   </label>
                   <select
@@ -84,7 +91,12 @@ const ContactSection: React.FC = () => {
                     required
                     className="w-full rounded-md bg-white/20 border-white/20 text-white placeholder:text-gray-400 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-helpdesk-teal"
                   >
-                    <option value="" disabled selected className="text-gray-800">
+                    <option
+                      value=""
+                      disabled
+                      selected
+                      className="text-gray-800"
+                    >
                       Select volume
                     </option>
                     <option value="less-than-100" className="text-gray-800">
@@ -102,7 +114,7 @@ const ContactSection: React.FC = () => {
                   </select>
                 </div>
               </div>
-              
+
               <div className="flex justify-center pt-4">
                 <Button
                   type="submit"
@@ -113,10 +125,11 @@ const ContactSection: React.FC = () => {
               </div>
             </form>
           </div>
-          
+
           <div className="mt-12 text-center text-gray-300">
             <p>
-              No credit card required. 14-day free trial available for all new accounts.
+              No credit card required. 14-day free trial available for all new
+              accounts.
             </p>
           </div>
         </div>
