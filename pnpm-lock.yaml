@@ -157,6 +157,9 @@ importers:
       zod:
         specifier: ^3.23.8
         version: 3.25.20
+      zustand:
+        specifier: ^5.0.5
+        version: 5.0.5(@types/react@18.3.22)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
     devDependencies:
       "@eslint/js":
         specifier: ^9.9.0
@@ -3942,6 +3945,27 @@ packages:
         integrity: sha512-z03fqpTMDF1G02VLKUMt6vyACE7rNWkh3gpXVHgPTw28NPtDFRGvcpTtPwn2kMKtQ0idtYJUTxchytmnqYswcw==,
       }
 
+  zustand@5.0.5:
+    resolution:
+      {
+        integrity: sha512-mILtRfKW9xM47hqxGIxCv12gXusoY/xTSHBYApXozR0HmQv299whhBeeAcRy+KrPPybzosvJBCOmVjq6x12fCg==,
+      }
+    engines: { node: ">=12.20.0" }
+    peerDependencies:
+      "@types/react": ">=18.0.0"
+      immer: ">=9.0.6"
+      react: ">=18.0.0"
+      use-sync-external-store: ">=1.2.0"
+    peerDependenciesMeta:
+      "@types/react":
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+
 snapshots:
   "@alloc/quick-lru@5.2.0": {}
 
@@ -6211,3 +6235,9 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.25.20: {}
+
+  zustand@5.0.5(@types/react@18.3.22)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1)):
+    optionalDependencies:
+      "@types/react": 18.3.22
+      react: 18.3.1
+      use-sync-external-store: 1.5.0(react@18.3.1)

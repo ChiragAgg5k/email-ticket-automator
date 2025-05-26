@@ -1,8 +1,11 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
+import useAuth from "@/lib/auth";
+import { Loader2 } from "lucide-react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 const HeroSection: React.FC = () => {
+  const { user, loading } = useAuth();
   return (
     <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-white to-blue-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,17 +23,27 @@ const HeroSection: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
-                className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-lg py-6 px-8"
+                className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-lg py-6 px-8 min-w-40"
                 asChild
               >
-                <Link to="/auth">Start Free Trial</Link>
+                <Link to={!loading && user ? "/tickets" : "/auth"}>
+                  {loading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : user ? (
+                    "Go to Dashboard"
+                  ) : (
+                    "Start Free Trial"
+                  )}
+                </Link>
               </Button>
-              <Button
-                variant="outline"
-                className="border-helpdesk-teal text-helpdesk-teal hover:bg-helpdesk-teal/10 text-lg py-6 px-8"
-              >
-                Request Demo
-              </Button>
+              <a href="#contact">
+                <Button
+                  variant="outline"
+                  className="border-helpdesk-teal text-helpdesk-teal hover:bg-helpdesk-teal/10 text-lg py-6 px-8"
+                >
+                  Request Demo
+                </Button>
+              </a>
             </div>
           </div>
 

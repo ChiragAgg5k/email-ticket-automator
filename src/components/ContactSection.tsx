@@ -1,7 +1,7 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import React from "react";
 
 const ContactSection: React.FC = () => {
   const { toast } = useToast();
@@ -21,7 +21,10 @@ const ContactSection: React.FC = () => {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-helpdesk-dark text-white">
+    <section
+      id="contact"
+      className="py-16 md:py-24 bg-helpdesk-dark text-white"
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
