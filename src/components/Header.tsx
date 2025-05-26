@@ -31,7 +31,7 @@ const Header: React.FC = () => {
               Testimonials
             </a>
             <Button className="bg-helpdesk-blue hover:bg-blue-600 transition-colors" asChild>
-              <Link to="/tickets">Get Started</Link>
+              <Link to="/auth">Get Started</Link>
             </Button>
           </nav>
 
@@ -101,7 +101,7 @@ const Header: React.FC = () => {
                 Testimonials
               </a>
               <Link 
-                to="/tickets"
+                to="/auth"
                 className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-white py-2 px-4 rounded text-center"
                 onClick={() => setIsMenuOpen(false)}
               >

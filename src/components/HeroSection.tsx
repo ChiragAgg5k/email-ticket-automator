@@ -20,7 +20,7 @@ const HeroSection: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button className="bg-helpdesk-blue hover:bg-blue-600 transition-colors text-lg py-6 px-8" asChild>
-                <Link to="/tickets">Start Free Trial</Link>
+                <Link to="/auth">Start Free Trial</Link>
               </Button>
               <Button variant="outline" className="border-helpdesk-teal text-helpdesk-teal hover:bg-helpdesk-teal/10 text-lg py-6 px-8">
                 Request Demo
