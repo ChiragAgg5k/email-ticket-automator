@@ -33,9 +33,11 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { database } from "@/lib/appwrite";
+import useAuthStore from "@/lib/stores/authStore";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { type Models } from "appwrite";
+import { faker } from "@faker-js/faker";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ID, Permission, Role, type Models } from "appwrite";
 import {
   AlertCircle,
   CheckCircle,
@@ -51,6 +53,7 @@ import { useForm } from "react-hook-form";
 type Ticket = {
   id: string;
   subject: string;
+  body: string;
   email: string;
   status: string;
   priority: string;
@@ -171,7 +174,9 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
 
       {showRawJson && (
         <div className="bg-gray-100 p-4 rounded-md overflow-auto max-h-60">
-          <pre className="text-xs">{JSON.stringify(ticket, null, 2)}</pre>
+          <pre className="text-xs break-words whitespace-pre-wrap">
+            {JSON.stringify(ticket, null, 2)}
+          </pre>
         </div>
       )}
     </div>
@@ -191,11 +196,73 @@ const Tickets = () => {
     queryFn: () => database.listDocuments("main", "tickets"),
     retry: false,
   });
+  const { user, loading } = useAuthStore();
+
+  const { mutate: createTicket } = useMutation({
+    mutationFn: (data: TicketFormData) => {
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (!data.email || !data.subject || !data.body) {
+        throw new Error("Please fill in all fields");
+      }
+
+      return database.createDocument(
+        "main",
+        "tickets",
+        ID.unique(),
+        {
+          email: data.email,
+          subject: data.subject,
+          body: data.body,
+          status: "open",
+          priority: data.priority,
+          userId: user.$id,
+        },
+        [
+          Permission.read(Role.user(user.$id)),
+          Permission.update(Role.user(user.$id)),
+          Permission.delete(Role.user(user.$id)),
+          Permission.write(Role.user(user.$id)),
+        ],
+      );
+    },
+    onSuccess: () => {
+      toast.success("Email ticket submitted successfully", {
+        description: "Your support request has been received.",
+      });
+      form.reset();
+      refetch();
+    },
+    onError: (error) => {
+      toast.error("Failed to submit ticket", {
+        description: error.message,
+      });
+    },
+  });
+
+  // Delete mutation
+  const { mutate: deleteTicket, isPending: isDeleting } = useMutation({
+    mutationFn: (ticketId: string) =>
+      database.deleteDocument("main", "tickets", ticketId),
+    onSuccess: () => {
+      toast.success("Ticket deleted successfully");
+      setSelectedTicket(null);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error("Failed to delete ticket", {
+        description: error.message,
+      });
+    },
+  });
 
   const mappedTickets: Ticket[] =
     tickets?.documents.map((doc: Models.Document) => ({
       id: doc.$id,
       subject: doc.subject,
+      body: doc.body,
       email: doc.email,
       status: doc.status,
       priority: doc.priority,
@@ -211,27 +278,6 @@ const Tickets = () => {
       priority: "medium",
     },
   });
-
-  const handleSubmit = async (data: TicketFormData) => {
-    setIsSubmitting(true);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      toast.success("Email ticket submitted successfully", {
-        description: "Your support request has been received.",
-      });
-
-      // Reset the form
-      form.reset();
-    } catch (error) {
-      toast.error("Failed to submit ticket", {
-        description: "Please try again later.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleTicketClick = (ticket: Ticket) => {
     setSelectedTicket(ticket);
@@ -296,6 +342,15 @@ const Tickets = () => {
                         </div>
                       </TableCell>
                     </TableRow>
+                  ) : mappedTickets.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={6}
+                        className="text-center h-20 text-muted-foreground"
+                      >
+                        No tickets have been created yet.
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     mappedTickets.map((ticket) => (
                       <TableRow
@@ -326,16 +381,65 @@ const Tickets = () => {
 
         {/* Email Form */}
         <Card>
-          <CardHeader>
-            <CardTitle>Create New Ticket</CardTitle>
-            <CardDescription>
-              Submit your support request and we'll get back to you shortly
-            </CardDescription>
-          </CardHeader>
+          <div className="flex items-start justify-between gap-4 px-6 py-6">
+            <CardHeader className="p-0">
+              <CardTitle>Create New Ticket</CardTitle>
+              <CardDescription>
+                Submit your support request and we'll get back to you shortly
+              </CardDescription>
+            </CardHeader>
+            <Button
+              type="button"
+              className="mb-0"
+              variant="outline"
+              onClick={() => {
+                // Generate a realistic support email
+                const firstName = faker.person.firstName();
+                const lastName = faker.person.lastName();
+                const email = faker.internet.email({
+                  firstName,
+                  lastName,
+                  provider: "example.com",
+                });
+                // Use a realistic support subject
+                const subject = faker.helpers.arrayElement([
+                  "Cannot login to my account",
+                  "Payment not going through",
+                  "Feature request: Dark mode",
+                  "Bug report: App crashes on launch",
+                  "Account locked after password attempts",
+                  "Requesting password reset",
+                  "Not receiving verification email",
+                  "Unable to update profile information",
+                  "Subscription renewal issue",
+                  "App is running slow",
+                ]);
+                // Generate a realistic support message body
+                const body = faker.helpers.arrayElement([
+                  `Hello,\n\nI'm having trouble with my account. ${faker.lorem.sentence()} Could you please assist?\n\nThanks,\n${firstName}`,
+                  `Hi Support,\n\nI encountered an issue: ${faker.lorem.sentence()} Please let me know what I should do next.\n\nRegards,\n${firstName} ${lastName}`,
+                  `Dear team,\n\n${faker.lorem.sentences({ min: 2, max: 3 })}\n\nThank you!`,
+                  `Hello,\n\nI would like to request a new feature: ${faker.lorem.words(3)}. ${faker.lorem.sentence()}\n\nBest,\n${firstName}`,
+                ]);
+                // Priority, slightly bias towards medium/high
+                const priority = faker.helpers.weightedArrayElement([
+                  { value: "low", weight: 1 },
+                  { value: "medium", weight: 2 },
+                  { value: "high", weight: 2 },
+                ]);
+                form.setValue("email", email);
+                form.setValue("subject", subject);
+                form.setValue("body", body);
+                form.setValue("priority", priority);
+              }}
+            >
+              Generate Fake Data
+            </Button>
+          </div>
           <CardContent>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(handleSubmit)}
+                onSubmit={form.handleSubmit((data) => createTicket(data))}
                 className="space-y-6"
               >
                 <FormField
@@ -345,7 +449,14 @@ const Tickets = () => {
                     <FormItem>
                       <FormLabel>Your Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="email@example.com" {...field} />
+                        <Input
+                          placeholder={
+                            loading
+                              ? "Loading..."
+                              : (user?.email ?? "email@example.com")
+                          }
+                          {...field}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -475,7 +586,27 @@ const Tickets = () => {
                 View the complete information for this support ticket
               </DialogDescription>
             </DialogHeader>
-            {selectedTicket && <TicketDetail ticket={selectedTicket} />}
+            {selectedTicket && (
+              <>
+                <TicketDetail ticket={selectedTicket} />
+                <div className="flex justify-end mt-6">
+                  <Button
+                    variant="destructive"
+                    onClick={() => deleteTicket(selectedTicket.id)}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? (
+                      <>
+                        <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                        Deleting...
+                      </>
+                    ) : (
+                      "Delete Ticket"
+                    )}
+                  </Button>
+                </div>
+              </>
+            )}
           </DialogContent>
         </Dialog>
       </div>

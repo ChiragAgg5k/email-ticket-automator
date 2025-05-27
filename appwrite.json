@@ -1,0 +1,118 @@
+{
+  "projectId": "68347e9a001a5950451b",
+  "projectName": "EmailTicket",
+  "settings": {
+    "services": {
+      "account": true,
+      "avatars": true,
+      "databases": true,
+      "locale": true,
+      "health": true,
+      "storage": true,
+      "teams": true,
+      "users": true,
+      "functions": true,
+      "graphql": true,
+      "messaging": true
+    },
+    "auth": {
+      "methods": {
+        "jwt": true,
+        "phone": true,
+        "invites": true,
+        "anonymous": true,
+        "email-otp": true,
+        "magic-url": true,
+        "email-password": true
+      },
+      "security": {
+        "duration": 31536000,
+        "limit": 0,
+        "sessionsLimit": 10,
+        "passwordHistory": 0,
+        "passwordDictionary": false,
+        "personalDataCheck": false,
+        "sessionAlerts": false,
+        "mockNumbers": []
+      }
+    }
+  },
+  "databases": [
+    {
+      "$id": "main",
+      "name": "main",
+      "enabled": true
+    }
+  ],
+  "collections": [
+    {
+      "$id": "tickets",
+      "$permissions": ["create(\"users\")"],
+      "databaseId": "main",
+      "name": "tickets",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "subject",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null
+        },
+        {
+          "key": "body",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 65535,
+          "default": null
+        },
+        {
+          "key": "email",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null
+        },
+        {
+          "key": "priority",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 20,
+          "default": null
+        }
+      ],
+      "indexes": []
+    }
+  ],
+  "functions": [
+    {
+      "$id": "6835c0f0002e349bfb6f",
+      "name": "trigger-email-parsing",
+      "runtime": "node-22",
+      "specification": "s-0.5vcpu-512mb",
+      "execute": ["users"],
+      "events": ["databases.*.collections.*.documents.*.create"],
+      "scopes": ["users.read"],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "src/main.js",
+      "commands": "npm install",
+      "path": "functions/trigger-email-parsing"
+    }
+  ]
+}
