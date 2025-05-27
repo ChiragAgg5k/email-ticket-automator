@@ -1,0 +1,13 @@
+{
+  "name": "email-parsed-webhook",
+  "version": "1.0.0",
+  "description": "Webhook for receiving parsed email data",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}

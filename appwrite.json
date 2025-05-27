@@ -113,6 +113,22 @@
       "entrypoint": "src/main.js",
       "commands": "npm install",
       "path": "functions/trigger-email-parsing"
+    },
+    {
+      "$id": "6835fc8500026c341e3e",
+      "name": "email-parsed-webhook",
+      "runtime": "node-22",
+      "specification": "s-0.5vcpu-512mb",
+      "execute": ["any"],
+      "events": [],
+      "scopes": ["users.read"],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "src/main.js",
+      "commands": "npm install",
+      "path": "functions/email-parsed-webhook"
     }
   ]
 }
