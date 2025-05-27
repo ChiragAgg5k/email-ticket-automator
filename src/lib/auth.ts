@@ -8,20 +8,29 @@ const useAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
-    const unsubscribe = account.get().then(async (user) => {
-      if (!user) {
-        setLoading(false);
-        navigate("/auth");
-      } else {
+    const checkAuth = async () => {
+      setLoading(true);
+
+      try {
+        const user = await account.get();
         setUser(user);
+      } catch (error) {
+        // User is not logged in or session expired
+        console.log("Authentication check failed:", error);
+        setUser(null);
+
+        if (
+          window.location.pathname !== "/auth" &&
+          window.location.pathname !== "/"
+        ) {
+          navigate("/auth");
+        }
+      } finally {
         setLoading(false);
       }
-    });
-
-    return () => {
-      unsubscribe.then(() => setLoading(false));
     };
+
+    checkAuth();
   }, [navigate, setLoading, setUser]);
 
   return { user, loading, setLoading };
