@@ -32,13 +32,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { database } from "@/lib/appwrite";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { type Models } from "appwrite";
 import {
   AlertCircle,
   CheckCircle,
   Clock,
   FileJson,
   FileText,
+  Loader2,
   Mail,
 } from "lucide-react";
 import { useState } from "react";
@@ -59,50 +63,6 @@ type TicketFormData = {
   body: string;
   priority: string;
 };
-
-// Sample ticket data for demonstration
-const sampleTickets = [
-  {
-    id: "TKT-1001",
-    subject: "Cannot export reports",
-    email: "john@example.com",
-    status: "open",
-    priority: "high",
-    createdAt: "2025-05-21T09:30:00",
-  },
-  {
-    id: "TKT-1002",
-    subject: "Login issues after password reset",
-    email: "sarah@example.com",
-    status: "in-progress",
-    priority: "medium",
-    createdAt: "2025-05-20T14:15:00",
-  },
-  {
-    id: "TKT-1003",
-    subject: "Feature request: Dark mode",
-    email: "mike@example.com",
-    status: "closed",
-    priority: "low",
-    createdAt: "2025-05-19T11:20:00",
-  },
-  {
-    id: "TKT-1004",
-    subject: "Dashboard data not loading",
-    email: "lisa@example.com",
-    status: "open",
-    priority: "high",
-    createdAt: "2025-05-18T16:45:00",
-  },
-  {
-    id: "TKT-1005",
-    subject: "Billing inquiry",
-    email: "alex@example.com",
-    status: "closed",
-    priority: "medium",
-    createdAt: "2025-05-17T10:10:00",
-  },
-];
 
 // Helper function to format dates
 const formatDate = (dateString: string) => {
@@ -221,6 +181,26 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
 const Tickets = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const {
+    isPending,
+    error,
+    data: tickets,
+    refetch,
+  } = useQuery({
+    queryKey: ["tickets"],
+    queryFn: () => database.listDocuments("main", "tickets"),
+    retry: false,
+  });
+
+  const mappedTickets: Ticket[] =
+    tickets?.documents.map((doc: Models.Document) => ({
+      id: doc.$id,
+      subject: doc.subject,
+      email: doc.email,
+      status: doc.status,
+      priority: doc.priority,
+      createdAt: doc.$createdAt,
+    })) || [];
 
   // Form handling
   const form = useForm({
@@ -260,7 +240,7 @@ const Tickets = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         <h1 className="text-3xl font-bold text-helpdesk-dark mb-8">
           Support Dashboard
         </h1>
@@ -287,24 +267,57 @@ const Tickets = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sampleTickets.map((ticket) => (
-                    <TableRow
-                      key={ticket.id}
-                      className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleTicketClick(ticket)}
-                    >
-                      <TableCell className="font-medium">{ticket.id}</TableCell>
-                      <TableCell>{ticket.subject}</TableCell>
-                      <TableCell>{ticket.email}</TableCell>
-                      <TableCell>
-                        <StatusBadge status={ticket.status} />
+                  {error ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-20 p-0">
+                        <div className="flex items-center justify-center h-full w-full gap-2">
+                          <span className="text-muted-foreground">
+                            Error loading tickets
+                            {error?.message ? `: ${error.message}` : ""}
+                          </span>
+                          <button
+                            onClick={() => refetch()}
+                            className="text-sm text-muted-foreground border border-muted-foreground/20 rounded-md px-2 py-1"
+                          >
+                            Retry
+                          </button>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <PriorityBadge priority={ticket.priority} />
-                      </TableCell>
-                      <TableCell>{formatDate(ticket.createdAt)}</TableCell>
                     </TableRow>
-                  ))}
+                  ) : isPending ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={6}
+                        className="text-center h-20 text-muted-foreground"
+                      >
+                        <div className="flex items-center justify-center gap-2">
+                          <Loader2 className="animate-spin" size={16} />
+                          Loading...
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    mappedTickets.map((ticket) => (
+                      <TableRow
+                        key={ticket.id}
+                        className="hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleTicketClick(ticket)}
+                      >
+                        <TableCell className="font-medium">
+                          {ticket.id}
+                        </TableCell>
+                        <TableCell>{ticket.subject}</TableCell>
+                        <TableCell>{ticket.email}</TableCell>
+                        <TableCell>
+                          <StatusBadge status={ticket.status} />
+                        </TableCell>
+                        <TableCell>
+                          <PriorityBadge priority={ticket.priority} />
+                        </TableCell>
+                        <TableCell>{formatDate(ticket.createdAt)}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -389,10 +402,10 @@ const Tickets = () => {
                               className={cn(
                                 field.value === priority &&
                                   (priority === "high"
-                                    ? "bg-red-600"
+                                    ? "bg-red-600 hover:bg-red-700"
                                     : priority === "medium"
-                                      ? "bg-yellow-600"
-                                      : "bg-green-600"),
+                                      ? "bg-yellow-600 hover:bg-yellow-700"
+                                      : "bg-green-600 hover:bg-green-700"),
                                 "flex-1",
                               )}
                               onClick={() =>
