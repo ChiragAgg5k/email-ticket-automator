@@ -1,5 +1,5 @@
-import React from "react";
 import { Mail } from "lucide-react";
+import React from "react";
 
 const Footer: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
           <div>
             <div className="flex items-center mb-4">
               <Mail className="h-6 w-6 text-helpdesk-teal mr-2" />
-              <span className="text-xl font-bold text-white">EmailTicket</span>
+              <span className="text-xl font-bold text-white">Email Ticket</span>
             </div>
             <p className="text-gray-400 mb-4">
               Transform your customer support with intelligent email parsing
@@ -186,7 +186,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-6 mt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm">
-              &copy; 2025 EmailTicket. All rights reserved.
+              &copy; 2025 Email Ticket. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a

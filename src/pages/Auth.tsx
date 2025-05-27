@@ -52,7 +52,7 @@ const Auth = () => {
       if (isSignUp) {
         await account.create(ID.unique(), data.email, data.password, data.name);
         toast.success("Account created successfully!", {
-          description: "Welcome to EmailTicket! Redirecting to dashboard...",
+          description: "Welcome to Email Ticket! Redirecting to dashboard...",
         });
       } else {
         await account.createEmailPasswordSession(data.email, data.password);

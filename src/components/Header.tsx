@@ -34,7 +34,7 @@ const Header: React.FC = () => {
             <Link to="/" className="flex items-center">
               <Mail className="h-8 w-8 text-helpdesk-teal mr-2" />
               <span className="text-xl font-bold text-helpdesk-dark">
-                EmailTicket
+                Email Ticket
               </span>
             </Link>
           </div>

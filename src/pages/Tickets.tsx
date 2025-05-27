@@ -154,11 +154,7 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
 
       <div className="border-t border-b py-4">
         <h3 className="font-medium mb-2">Ticket Description</h3>
-        <p className="text-gray-700">
-          This is a placeholder description for ticket {ticket.id}. In a real
-          application, this would contain the actual content of the ticket from
-          the database.
-        </p>
+        <p className="text-gray-700">{ticket.body}</p>
       </div>
 
       <div className="flex gap-2">

@@ -1,8 +1,8 @@
-# 📧 EmailTicket
+# 📧 Email Ticket
 
 A modern, AI-powered helpdesk platform that transforms email support into an organized ticket management system. Built with React, TypeScript, and Appwrite for seamless customer support experiences.
 
-![EmailTicket Dashboard](https://via.placeholder.com/800x400/4285F4/FFFFFF?text=EmailTicket+Dashboard)
+![Email Ticket Dashboard](https://via.placeholder.com/800x400/4285F4/FFFFFF?text=Email Ticket+Dashboard)
 
 ## ✨ Features
 
@@ -47,7 +47,7 @@ A modern, AI-powered helpdesk platform that transforms email support into an org
 
    ```bash
    git clone <YOUR_GIT_URL>
-   cd emailticket
+   cd Email Ticket
    ```
 
 2. **Install dependencies**
@@ -123,7 +123,7 @@ src/
 
 ### Getting Started
 
-1. **Visit the landing page** to learn about EmailTicket's features
+1. **Visit the landing page** to learn about Email Ticket's features
 2. **Sign up** for a new account or **sign in** with existing credentials
 3. **Access the dashboard** to view and manage support tickets
 
@@ -199,10 +199,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Need help? We're here for you!
 
-- 📧 **Email**: support@emailticket.com
-- 💬 **Discord**: [Join our community](https://discord.gg/emailticket)
-- 📖 **Documentation**: [docs.emailticket.com](https://docs.emailticket.com)
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/yourusername/emailticket/issues)
+- 📧 **Email**: support@Email Ticket.com
+- 💬 **Discord**: [Join our community](https://discord.gg/Email Ticket)
+- 📖 **Documentation**: [docs.Email Ticket.com](https://docs.Email Ticket.com)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/yourusername/Email Ticket/issues)
 
 ## 🎉 Acknowledgments
 

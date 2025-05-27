@@ -1,14 +1,14 @@
 {
-  "name": "starter-template",
+  "name": "trigger-email-parsing",
   "version": "1.0.0",
-  "description": "",
+  "description": "Triggers the email parsing function by calling the Postmark API",
   "main": "src/main.js",
   "type": "module",
   "scripts": {
     "format": "prettier --write ."
   },
   "dependencies": {
-    "node-appwrite": "^14.1.0"
+    "axios": "^1.9.0"
   },
   "devDependencies": {
     "prettier": "^3.2.5"
