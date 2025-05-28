@@ -235,7 +235,11 @@ const Auth = () => {
                     variant="outline"
                     className="w-full flex items-center justify-center gap-2 border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                     onClick={() => {
-                      account.createOAuth2Session(OAuthProvider.Google);
+                      account.createOAuth2Session(
+                        OAuthProvider.Google,
+                        window.location.origin + "/tickets",
+                        window.location.origin + "/error",
+                      );
                     }}
                   >
                     {/* Google SVG Icon */}

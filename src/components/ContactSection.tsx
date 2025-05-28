@@ -22,11 +22,14 @@ const waitlistSchema = z.object({
         "hotmail.com",
         "outlook.com",
       ];
-      const domain = email.split("@")[1];
+      const domain = email.split("@")[1]?.toLowerCase();
       return !personalDomains.includes(domain);
     }, "Please use a work email address"),
   company_name: z.string().min(2, "Company name must be at least 2 characters"),
-  monthly_support_tickets: z.string().min(1, "Please select a volume"),
+  monthly_support_tickets: z.enum(
+    ["less-than-100", "100-500", "500-1000", "1000+"],
+    { errorMap: () => ({ message: "Please select a valid volume" }) },
+  ),
 });
 
 type WaitlistFormData = z.infer<typeof waitlistSchema>;
@@ -50,7 +53,11 @@ const ContactSection: React.FC = () => {
   const canSubmit = () => {
     const now = Date.now();
     const timeSinceLastSubmission = now - lastSubmissionTime;
-    return submissionCount < 3 && timeSinceLastSubmission > 3600000; // 1 hour cooldown
+    // Allow up to 3 submissions in any rolling 1-hour window.
+    if (submissionCount >= 3 && timeSinceLastSubmission < 3600000) {
+      return false;
+    }
+    return true;
   };
 
   const { mutate: createTicket } = useMutation({
@@ -82,6 +89,7 @@ const ContactSection: React.FC = () => {
     const resetInterval = setInterval(
       () => {
         setSubmissionCount(0);
+        setLastSubmissionTime(0);
       },
       24 * 60 * 60 * 1000,
     );
