@@ -178,13 +178,40 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
               {(() => {
                 try {
                   // Try to pretty-print if it's valid JSON
-                  return JSON.stringify(
+                  const parsedJson =
                     typeof ticket.rawJson === "string"
                       ? JSON.parse(ticket.rawJson)
-                      : ticket.rawJson,
-                    null,
-                    2,
-                  );
+                      : ticket.rawJson;
+
+                  // If HtmlBody exists, format it separately
+                  if (parsedJson.HtmlBody) {
+                    const { HtmlBody, ...restJson } = parsedJson;
+                    const formattedRest = JSON.stringify(restJson, null, 2);
+
+                    // Parse the nested JSON in HtmlBody if it's a string
+                    let formattedHtml;
+                    try {
+                      const parsedHtmlBody =
+                        typeof HtmlBody === "string"
+                          ? JSON.parse(HtmlBody)
+                          : HtmlBody;
+                      formattedHtml = JSON.stringify(parsedHtmlBody, null, 2);
+                    } catch (e) {
+                      formattedHtml = JSON.stringify(HtmlBody, null, 2);
+                    }
+
+                    return (
+                      <>
+                        {`${formattedRest.slice(0, -1)},\n  "HtmlBody": `}
+                        <span className="bg-blue-50 text-blue-700 px-1 rounded">
+                          {formattedHtml}
+                        </span>
+                        {`\n}`}
+                      </>
+                    );
+                  }
+
+                  return JSON.stringify(parsedJson, null, 2);
                 } catch (e) {
                   // Fallback to raw string if not valid JSON
                   return ticket.rawJson;
