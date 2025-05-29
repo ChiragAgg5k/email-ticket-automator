@@ -237,8 +237,8 @@ const Auth = () => {
                     onClick={() => {
                       account.createOAuth2Session(
                         OAuthProvider.Google,
-                        window.location.origin + "/tickets",
-                        window.location.origin + "/error",
+                        `${window.location.origin}/tickets`,
+                        `${window.location.origin}/error`,
                       );
                     }}
                   >
