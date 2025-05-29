@@ -58,6 +58,8 @@ type Ticket = {
   status: string;
   priority: string;
   createdAt: string;
+  processing_status: string;
+  rawJson: string | null;
 };
 
 type TicketFormData = {
@@ -162,19 +164,36 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
           onClick={() => setShowRawJson(!showRawJson)}
           variant="outline"
           className="flex items-center gap-2"
+          disabled={!ticket.rawJson}
         >
           {showRawJson ? <FileText /> : <FileJson />}
           {showRawJson ? "Hide Raw JSON" : "Show Raw JSON"}
         </Button>
       </div>
 
-      {showRawJson && (
-        <div className="bg-gray-100 p-4 rounded-md overflow-auto max-h-60">
-          <pre className="text-xs break-words whitespace-pre-wrap">
-            {JSON.stringify(ticket, null, 2)}
-          </pre>
-        </div>
-      )}
+      <div className="flex justify-center items-center">
+        {showRawJson && ticket.rawJson && (
+          <div className="bg-gray-100 p-4 rounded-md overflow-x-auto max-h-60 max-w-xl border border-gray-200">
+            <pre className="text-xs font-mono whitespace-pre m-0">
+              {(() => {
+                try {
+                  // Try to pretty-print if it's valid JSON
+                  return JSON.stringify(
+                    typeof ticket.rawJson === "string"
+                      ? JSON.parse(ticket.rawJson)
+                      : ticket.rawJson,
+                    null,
+                    2,
+                  );
+                } catch (e) {
+                  // Fallback to raw string if not valid JSON
+                  return ticket.rawJson;
+                }
+              })()}
+            </pre>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -191,6 +210,15 @@ const Tickets = () => {
     queryKey: ["tickets"],
     queryFn: () => database.listDocuments("main", "tickets"),
     retry: false,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      // Check if any ticket is not completed
+      const hasIncompleteTickets = data?.documents.some(
+        (doc: Models.Document) => doc.processing_status !== "completed",
+      );
+      // If there are incomplete tickets, poll every 2 seconds
+      return hasIncompleteTickets ? 2000 : false;
+    },
   });
   const { user, loading } = useAuthStore();
 
@@ -215,6 +243,7 @@ const Tickets = () => {
           status: "open",
           priority: data.priority,
           userId: user.$id,
+          processing_status: "waiting",
         },
         [
           Permission.read(Role.user(user.$id)),
@@ -263,6 +292,8 @@ const Tickets = () => {
       status: doc.status,
       priority: doc.priority,
       createdAt: doc.$createdAt,
+      processing_status: doc.processing_status || "waiting",
+      rawJson: doc.rawJson || null,
     })) || [];
 
   // Form handling
@@ -305,13 +336,14 @@ const Tickets = () => {
                     <TableHead>Email</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Priority</TableHead>
+                    <TableHead>Processing</TableHead>
                     <TableHead>Created</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {error ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-20 p-0">
+                      <TableCell colSpan={7} className="h-20 p-0">
                         <div className="flex items-center justify-center h-full w-full gap-2">
                           <span className="text-muted-foreground">
                             Error loading tickets
@@ -329,7 +361,7 @@ const Tickets = () => {
                   ) : isPending ? (
                     <TableRow>
                       <TableCell
-                        colSpan={6}
+                        colSpan={7}
                         className="text-center h-20 text-muted-foreground"
                       >
                         <div className="flex items-center justify-center gap-2">
@@ -341,7 +373,7 @@ const Tickets = () => {
                   ) : mappedTickets.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={6}
+                        colSpan={7}
                         className="text-center h-20 text-muted-foreground"
                       >
                         No tickets have been created yet.
@@ -364,6 +396,24 @@ const Tickets = () => {
                         </TableCell>
                         <TableCell>
                           <PriorityBadge priority={ticket.priority} />
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={cn(
+                              "px-2 py-1 rounded-full text-xs font-medium",
+                              ticket.processing_status === "completed" &&
+                                "bg-green-100 text-green-800",
+                              ticket.processing_status === "processing" &&
+                                "bg-blue-100 text-blue-800",
+                              ticket.processing_status === "waiting" &&
+                                "bg-gray-100 text-gray-800",
+                              ticket.processing_status === "failed" &&
+                                "bg-red-100 text-red-800",
+                            )}
+                          >
+                            {ticket.processing_status.charAt(0).toUpperCase() +
+                              ticket.processing_status.slice(1)}
+                          </span>
                         </TableCell>
                         <TableCell>{formatDate(ticket.createdAt)}</TableCell>
                       </TableRow>
