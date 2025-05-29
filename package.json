@@ -1,5 +1,13 @@
 {
-  "name": "email-ticket",
+  "name": "email-ticket-automator",
+  "description": "Email Ticket Automator is a platform that allows you to create and manage your helpdesk.",
+  "author": "Chirag Aggarwal",
+  "license": "MIT",
+  "homepage": "https://github.com/ChiragAgg5k/email-ticket-automator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChiragAgg5k/email-ticket-automator.git"
+  },
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -43,7 +51,7 @@
     "@radix-ui/react-tooltip": "^1.1.4",
     "@tanstack/react-query": "^5.56.2",
     "appwrite": "^18.1.1",
-    "caniuse-lite": "^1.0.30001718",
+    "caniuse-lite": "^1.0.30001720",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
