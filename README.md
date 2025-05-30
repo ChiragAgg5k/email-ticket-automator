@@ -2,7 +2,7 @@
 
 A modern, AI-powered helpdesk platform that transforms email support into an organized ticket management system. Built with React, TypeScript, Postmark, and Appwrite for seamless customer support experiences.
 
-![Email Ticket Dashboard](/assets/banner-cropped.png)
+![Email Ticket Dashboard](https://github.com/ChiragAgg5k/email-ticket-automator/blob/main/assets/banner-cropped.png?raw=true)
 
 ## 🏹 Quick Start
 
