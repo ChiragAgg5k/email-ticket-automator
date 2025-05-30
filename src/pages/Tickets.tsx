@@ -46,6 +46,7 @@ import {
   FileText,
   Loader2,
   Mail,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -60,13 +61,13 @@ type Ticket = {
   createdAt: string;
   processing_status: string;
   rawJson: string | null;
+  description: string | null;
 };
 
 type TicketFormData = {
   email: string;
   subject: string;
   body: string;
-  priority: string;
 };
 
 // Helper function to format dates
@@ -117,7 +118,12 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 // Priority component
-const PriorityBadge = ({ priority }: { priority: string }) => {
+const PriorityBadge = ({ priority }: { priority: string | null }) => {
+  // If priority is null or undefined, don't show anything
+  if (!priority) {
+    return null;
+  }
+
   const colors = {
     high: "bg-red-100 text-red-800",
     medium: "bg-yellow-100 text-yellow-800",
@@ -154,8 +160,36 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
         </div>
       </div>
 
+      {/* AI Ticket Description Section - Only show when processing is completed and description exists */}
+      {ticket.processing_status === "completed" && ticket.description && (
+        <div className="relative bg-gradient-to-r from-blue-50 via-purple-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 rounded-t-lg"></div>
+          <div className="flex items-start gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Ticket Analysis
+                </h3>
+                <div className="flex items-center gap-1 px-2 py-1 bg-white/60 rounded-full">
+                  <Sparkles className="w-3 h-3 text-purple-600" />
+                  <span className="text-xs font-medium text-purple-700">
+                    AI Generated
+                  </span>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-purple-600 rounded-full"></div>
+                <p className="text-gray-700 leading-relaxed pl-4 font-medium">
+                  {ticket.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="border-t border-b py-4">
-        <h3 className="font-medium mb-2">Ticket Description</h3>
+        <h3 className="font-medium mb-2">Ticket Body</h3>
         <p className="text-gray-700">{ticket.body}</p>
       </div>
 
@@ -268,7 +302,6 @@ const Tickets = () => {
           subject: data.subject,
           body: data.body,
           status: "open",
-          priority: data.priority,
           userId: user.$id,
           processing_status: "waiting",
         },
@@ -321,6 +354,7 @@ const Tickets = () => {
       createdAt: doc.$createdAt,
       processing_status: doc.processing_status || "waiting",
       rawJson: doc.rawJson || null,
+      description: doc.description || null,
     })) || [];
 
   // Form handling
@@ -329,7 +363,6 @@ const Tickets = () => {
       email: "",
       subject: "",
       body: "",
-      priority: "medium",
     },
   });
 
@@ -494,16 +527,9 @@ const Tickets = () => {
                   `Dear team,\n\n${faker.lorem.sentences({ min: 2, max: 3 })}\n\nThank you!`,
                   `Hello,\n\nI would like to request a new feature: ${faker.lorem.words(3)}. ${faker.lorem.sentence()}\n\nBest,\n${firstName}`,
                 ]);
-                // Priority, slightly bias towards medium/high
-                const priority = faker.helpers.weightedArrayElement([
-                  { value: "low", weight: 1 },
-                  { value: "medium", weight: 2 },
-                  { value: "high", weight: 2 },
-                ]);
                 form.setValue("email", email);
                 form.setValue("subject", subject);
                 form.setValue("body", body);
-                form.setValue("priority", priority);
               }}
             >
               Generate Fake Data
@@ -563,44 +589,6 @@ const Tickets = () => {
                           className="min-h-[150px]"
                           {...field}
                         />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="priority"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Priority</FormLabel>
-                      <FormControl>
-                        <div className="flex gap-4">
-                          {["low", "medium", "high"].map((priority) => (
-                            <Button
-                              key={priority}
-                              type="button"
-                              variant={
-                                field.value === priority ? "default" : "outline"
-                              }
-                              className={cn(
-                                field.value === priority &&
-                                  (priority === "high"
-                                    ? "bg-red-600 hover:bg-red-700"
-                                    : priority === "medium"
-                                      ? "bg-yellow-600 hover:bg-yellow-700"
-                                      : "bg-green-600 hover:bg-green-700"),
-                                "flex-1",
-                              )}
-                              onClick={() =>
-                                form.setValue("priority", priority)
-                              }
-                            >
-                              {priority.charAt(0).toUpperCase() +
-                                priority.slice(1)}
-                            </Button>
-                          ))}
-                        </div>
                       </FormControl>
                     </FormItem>
                   )}
