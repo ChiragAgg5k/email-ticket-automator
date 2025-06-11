@@ -35,6 +35,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { database } from "@/lib/appwrite";
 import useAuthStore from "@/lib/stores/authStore";
 import { cn } from "@/lib/utils";
+import type { Tickets as TicketType } from "@/types/appwrite";
 import { faker } from "@faker-js/faker";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ID, Permission, Role, type Models } from "appwrite";
@@ -50,19 +51,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
-type Ticket = {
-  id: string;
-  subject: string;
-  body: string;
-  email: string;
-  status: string;
-  priority: string;
-  createdAt: string;
-  processing_status: string;
-  rawJson: string | null;
-  description: string | null;
-};
 
 type TicketFormData = {
   email: string;
@@ -140,7 +128,7 @@ const PriorityBadge = ({ priority }: { priority: string | null }) => {
   );
 };
 
-const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
+const TicketDetail = ({ ticket }: { ticket: TicketType }) => {
   const [showRawJson, setShowRawJson] = useState(false);
 
   return (
@@ -151,7 +139,7 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span>From: {ticket.email}</span>
             <span>•</span>
-            <span>Created: {formatDate(ticket.createdAt)}</span>
+            <span>Created: {formatDate(ticket.$createdAt)}</span>
           </div>
         </div>
         <div className="flex gap-2">
@@ -261,7 +249,7 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
 
 const Tickets = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null);
   const {
     isPending,
     error,
@@ -343,17 +331,17 @@ const Tickets = () => {
     },
   });
 
-  const mappedTickets: Ticket[] =
+  const mappedTickets: TicketType[] =
     tickets?.documents.map((doc: Models.Document) => ({
-      id: doc.$id,
+      ...doc,
       subject: doc.subject,
       body: doc.body,
       email: doc.email,
       status: doc.status,
       priority: doc.priority,
-      createdAt: doc.$createdAt,
-      processing_status: doc.processing_status || "waiting",
+      userId: doc.userId,
       rawJson: doc.rawJson || null,
+      processing_status: doc.processing_status || "waiting",
       description: doc.description || null,
     })) || [];
 
@@ -366,7 +354,7 @@ const Tickets = () => {
     },
   });
 
-  const handleTicketClick = (ticket: Ticket) => {
+  const handleTicketClick = (ticket: TicketType) => {
     setSelectedTicket(ticket);
   };
 
@@ -442,12 +430,12 @@ const Tickets = () => {
                   ) : (
                     mappedTickets.map((ticket) => (
                       <TableRow
-                        key={ticket.id}
+                        key={ticket.$id}
                         className="hover:bg-gray-50 cursor-pointer"
                         onClick={() => handleTicketClick(ticket)}
                       >
                         <TableCell className="font-medium">
-                          {ticket.id}
+                          {ticket.$id}
                         </TableCell>
                         <TableCell>{ticket.subject}</TableCell>
                         <TableCell>{ticket.email}</TableCell>
@@ -475,7 +463,7 @@ const Tickets = () => {
                               ticket.processing_status.slice(1)}
                           </span>
                         </TableCell>
-                        <TableCell>{formatDate(ticket.createdAt)}</TableCell>
+                        <TableCell>{formatDate(ticket.$createdAt)}</TableCell>
                       </TableRow>
                     ))
                   )}
@@ -653,7 +641,7 @@ const Tickets = () => {
                 <div className="flex justify-end mt-6">
                   <Button
                     variant="destructive"
-                    onClick={() => deleteTicket(selectedTicket.id)}
+                    onClick={() => deleteTicket(selectedTicket.$id)}
                     disabled={isDeleting}
                   >
                     {isDeleting ? (

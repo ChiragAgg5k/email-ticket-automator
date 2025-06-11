@@ -92,6 +92,81 @@
           "array": false,
           "size": 20,
           "default": null
+        },
+        {
+          "key": "userId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null
+        },
+        {
+          "key": "rawJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 65535,
+          "default": null
+        },
+        {
+          "key": "processing_status",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null
+        },
+        {
+          "key": "description",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 65535,
+          "default": null
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "waitlist",
+      "$permissions": ["create(\"any\")"],
+      "databaseId": "main",
+      "name": "waitlist",
+      "enabled": true,
+      "documentSecurity": false,
+      "attributes": [
+        {
+          "key": "full_name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null
+        },
+        {
+          "key": "work_email",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null
+        },
+        {
+          "key": "company_name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null
+        },
+        {
+          "key": "monthly_support_tickets",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null
         }
       ],
       "indexes": []
